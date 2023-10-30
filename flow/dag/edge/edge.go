@@ -9,4 +9,5 @@ type Edge interface {
 	ID() string
 	From() node.Node
 	To() node.Node
+	isPassable() bool
 }

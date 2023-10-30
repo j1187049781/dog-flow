@@ -1,4 +1,5 @@
-package event
+package runtime
+
 
 type Event interface {
 	// ID returns the ID of the event.
@@ -7,4 +8,6 @@ type Event interface {
 	ToFlowInstanceId() string
 
 	ToNodeId() string
+
+	Handle(context *FlowContext) error
 }

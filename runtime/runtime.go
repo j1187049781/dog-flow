@@ -2,20 +2,19 @@ package runtime
 
 import (
 	"dog-flow/flow/dag"
-	"dog-flow/runtime/event"
 )
 
 const MAX_EVENT_QUEUE_SIZE = 100
 
 type Runtime struct {
 	flowInstance map[string]*FlowInstance
-	eventQueue chan *event.Event
+	eventQueue chan *Event
 }
 
 func NewRuntime() *Runtime {
 	return &Runtime{
 		flowInstance: make(map[string]*FlowInstance),
-		eventQueue: make(chan *event.Event, MAX_EVENT_QUEUE_SIZE),
+		eventQueue: make(chan *Event, MAX_EVENT_QUEUE_SIZE),
 	}
 }
 
@@ -32,7 +31,7 @@ func (r *Runtime) StartFlowInstance(flowId string) error {
 		return nil
 	}
 
-	return flowInstance.Start()
+	return flowInstance.Start(r.eventQueue)
 }
 
 func (r *Runtime) StopFlowInstance(flowId string) error {
@@ -45,7 +44,7 @@ func (r *Runtime) StopFlowInstance(flowId string) error {
 	return flowInstance.Stop()
 }
 
-func (r *Runtime) ReceiveEvent(event *event.Event) error {
+func (r *Runtime) ReceiveEvent(event *Event) error {
 	r.eventQueue <- event
 
 	return nil
@@ -58,7 +57,7 @@ func (r *Runtime) Run()  {
 	}
 }
 
-func (r *Runtime) handleEvent(event *event.Event) error {
+func (r *Runtime) handleEvent(event *Event) error {
 	flowInstance := r.flowInstance[(*event).ToFlowInstanceId()]
 
 	if flowInstance == nil {

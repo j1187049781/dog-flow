@@ -1,30 +1,28 @@
-package dag
+package flow
 
 import (
-	"dog-flow/flow/dag/edge"
-	"dog-flow/flow/dag/node"
 	"errors"
 )
 
 type Dag struct {
 	// Nodes is a map of node IDs to nodes.
-	Nodes map[string]node.Node
+	Nodes map[string]Node
 
 	// key: ndoeID, value: edge list. 
 	// Edges is a map of node IDs to edges.
-	Edges map[string][]edge.Edge
+	Edges map[string][]Edge
 }
 
 // New returns a new, empty DAG.
 func New() *Dag {
 	return &Dag{
-		Nodes: make(map[string]node.Node),
-		Edges: make(map[string][]edge.Edge),
+		Nodes: make(map[string]Node),
+		Edges: make(map[string][]Edge),
 	}
 }
 
 // AddNode adds a node to the DAG.
-func (d *Dag) AddNode(n node.Node) error{
+func (d *Dag) AddNode(n Node) error{
 	id := n.ID()
 
 	if _, ok := d.Nodes[id]; ok {
@@ -37,7 +35,7 @@ func (d *Dag) AddNode(n node.Node) error{
 }
 
 // AddEdge adds an edge to the DAG.
-func (d *Dag) AddEdge(e edge.Edge) error {
+func (d *Dag) AddEdge(e Edge) error {
 	from := e.From()
 	to := e.To()
 
@@ -50,7 +48,7 @@ func (d *Dag) AddEdge(e edge.Edge) error {
 	}
 
 	if _, ok := d.Edges[from.ID()]; !ok {
-		d.Edges[from.ID()] = make([]edge.Edge, 0)
+		d.Edges[from.ID()] = make([]Edge, 0)
 	}
 
 	d.Edges[from.ID()] = append(d.Edges[from.ID()], e)

@@ -1,8 +1,5 @@
-package runtime
+package flow
 
-import (
-	"dog-flow/flow/dag"
-)
 
 const MAX_EVENT_QUEUE_SIZE = 100
 
@@ -18,7 +15,7 @@ func NewRuntime() *Runtime {
 	}
 }
 
-func (r *Runtime) InitFlowInstance(flowId string, dag *dag.Dag) error {
+func (r *Runtime) InitFlowInstance(flowId string, dag *Dag) error {
 	r.flowInstance[flowId] = NewFlowInstance(flowId, dag)
 
 	return nil

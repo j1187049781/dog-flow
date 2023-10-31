@@ -1,19 +1,16 @@
-package runtime
+package flow
 
-import (
-	"dog-flow/flow/dag"
-)
 
 type FlowInstance struct {
 	Id string
-	Dag *dag.Dag 
+	Dag *Dag 
 	States map[string]*State
 
 	eventQueue chan<- *Event
 	Signal chan *Signal
 }
 
-func NewFlowInstance(id string, dag *dag.Dag) *FlowInstance {
+func NewFlowInstance(id string, dag *Dag) *FlowInstance {
 	return &FlowInstance{
 		Id: id,
 		Dag: dag,

@@ -1,4 +1,4 @@
-package runtime
+package flow
 
 type Signal struct {
 	Code SignalCode

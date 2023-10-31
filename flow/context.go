@@ -1,16 +1,15 @@
-package runtime
+package flow
 
-import "dog-flow/flow/dag/node"
 
 // FlowContext is the context of a node.
 type FlowContext struct {
 	runtime *Runtime
 	instance *FlowInstance
-	node *node.Node
+	node Node
 }
 
 // NewFlowContext creates a new FlowContext.
-func NewFlowContext(runtime *Runtime, instance *FlowInstance, node *node.Node) *FlowContext {
+func NewFlowContext(runtime *Runtime, instance *FlowInstance, node Node) *FlowContext {
 	return &FlowContext{
 		runtime: runtime,
 		instance: instance,
@@ -29,7 +28,7 @@ func (c *FlowContext) Instance() *FlowInstance {
 }
 
 // Node returns the node of the context.
-func (c *FlowContext) Node() *node.Node {
+func (c *FlowContext) Node() Node {
 	return c.node
 }
 

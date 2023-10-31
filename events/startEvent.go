@@ -1,6 +1,6 @@
 package events
 
-import "dog-flow/runtime"
+import "dog-flow/flow"
 
 // StartEvent is an event that is fired when a node is started.
 type StartEvent struct {
@@ -29,7 +29,7 @@ func (e *StartEvent) ToNodeId() string {
 	return e.NodeId
 }
 
-func (e *StartEvent) Handle(context *runtime.FlowContext) error {
+func (e *StartEvent) Handle(context flow.FlowContext) error {
 	context.DoneNode(e.NodeId)
 	return nil
 }

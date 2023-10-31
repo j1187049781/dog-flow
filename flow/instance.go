@@ -7,7 +7,6 @@ type FlowInstance struct {
 	States map[string]*State
 
 	eventQueue chan<- *Event
-	Signal chan *Signal
 }
 
 func NewFlowInstance(id string, dag *Dag) *FlowInstance {
@@ -15,7 +14,6 @@ func NewFlowInstance(id string, dag *Dag) *FlowInstance {
 		Id: id,
 		Dag: dag,
 		States: make(map[string]*State),
-		Signal: make(chan *Signal),
 	}
 }
 
@@ -64,20 +62,8 @@ func (f *FlowInstance) HandleEvent(event *Event) error {
 	return nil
 }
 
-func (f *FlowInstance) HandleSignal(signal *Signal) error {
-	signalCode := signal.Code
-	fromNodeId := signal.NodeId
-	switch signalCode {
-		case StartSignal:
-			// TODO
-		case DoneSignal:
-			// TODO
-			f.triggerNextNodes(fromNodeId)
-	}
-	return nil
-}
 
-func (f *FlowInstance) triggerNextNodes(fromNodeId string) error {
+func (f *FlowInstance) TriggerNextNodes(fromNodeId string) error {
 	edges := f.Dag.Edges[fromNodeId]
 	for _, edge := range edges {
 		// TODO

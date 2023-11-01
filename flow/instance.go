@@ -43,7 +43,7 @@ func (f *FlowInstance) Start() {
 
 	for _, node := range f.Dag.Nodes {
 		if InDegree[node.ID()] == 0 {
-			f.runANode(node.ID())
+			// 启动节点
 		}	
 	}
 }

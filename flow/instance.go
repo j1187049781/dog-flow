@@ -1,29 +1,31 @@
 package flow
 
+import "dog-flow/util"
+
 
 type FlowInstance struct {
 	Id string
-	Dag *Dag 
-	States map[string]*State
+	Dag *Dag
 
-	eventQueue chan<- *Event
+	nodeDoneQ util.Queue[string]
+
+	FlowContext *FlowContext
 }
 
 func NewFlowInstance(id string, dag *Dag) *FlowInstance {
-	return &FlowInstance{
+	f := &FlowInstance{
 		Id: id,
 		Dag: dag,
-		States: make(map[string]*State),
+		nodeDoneQ: util.NewQueue[string](),
 	}
+	f.FlowContext = NewFlowContext(f, nil)
+	return f
 }
 
-func (f *FlowInstance) Start(eventQueue chan<- *Event) error {
-
-	f.eventQueue = eventQueue
-
+func (f *FlowInstance) Start() {
 	// 初始化所有的节点状态
 	for _, node := range f.Dag.Nodes {
-		f.States[node.ID()] = NewState(node.ID())
+		node.Done()
 	}
 	
 	// 启动所有的入度为0的节点
@@ -44,41 +46,4 @@ func (f *FlowInstance) Start(eventQueue chan<- *Event) error {
 			f.runANode(node.ID())
 		}	
 	}
-
-	return nil
-}
-
-func (f *FlowInstance) Stop() error {
-	return nil
-}
-
-func (f *FlowInstance) HandleEvent(event *Event) error {
-
-	if err := (*event).Handle(NewFlowContext(nil, f, nil)) ; err != nil{
-		return err
-	}
-
-	
-	return nil
-}
-
-
-func (f *FlowInstance) TriggerNextNodes(fromNodeId string) error {
-	edges := f.Dag.Edges[fromNodeId]
-	for _, edge := range edges {
-		// TODO
-		toId := edge.To().ID()
-		f.runANode(toId)
-	}
-	return nil
-}
-
-func (f *FlowInstance) runANode(nodeId string) error {
-	f.States[nodeId].SetRunning()
-	return nil
-}
-
-func (f *FlowInstance) doneANode(nodeId string) error {
-	f.States[nodeId].SetStop()
-	return nil
 }

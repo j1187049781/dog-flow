@@ -25,7 +25,7 @@ func NewFlowInstance(id string, dag *Dag) *FlowInstance {
 func (f *FlowInstance) Start() {
 	// 初始化所有的节点状态
 	for _, node := range f.Dag.Nodes {
-		node.Done()
+		node.Done(nil)
 	}
 	
 	// 启动所有的入度为0的节点

@@ -57,6 +57,12 @@ func (f *FlowInstance) Start() {
 	f.forward()
 }
 
+func (f *FlowInstance)HandleEvent(event Event) {
+	nodeId := event.ToNodeId()
+
+	f.Dag.Nodes[nodeId].OnEvent(event)
+}
+
 func (f *FlowInstance) forward() {
 
 	for !f.nodeDoneQ.Empty() {

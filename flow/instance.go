@@ -5,7 +5,6 @@ import "dog-flow/util"
 type FlowInstance struct {
 	Id  string
 	Dag *Dag
-
 	nodeDoneQ util.Queue[string]
 }
 
@@ -24,6 +23,8 @@ func (f *FlowInstance) GetFlowId() string {
 }
 
 func (f *FlowInstance) DoneNode(nodeId string) error {
+	f.Dag.Nodes[nodeId].Leave(f)
+
 	f.nodeDoneQ.Push(nodeId)
 	return nil
 }
@@ -50,7 +51,7 @@ func (f *FlowInstance) Start() {
 	for _, node := range f.Dag.Nodes {
 		if InDegree[node.ID()] == 0 {
 			// 启动节点
-			node.Run(f)
+			f.execRun(node)
 		}
 	}
 
@@ -60,7 +61,9 @@ func (f *FlowInstance) Start() {
 func (f *FlowInstance)HandleEvent(event Event) {
 	nodeId := event.ToNodeId()
 
-	f.Dag.Nodes[nodeId].OnEvent(event)
+	f.Dag.Nodes[nodeId].OnEvent(f, event)
+	
+	f.forward()
 }
 
 func (f *FlowInstance) forward() {
@@ -69,9 +72,15 @@ func (f *FlowInstance) forward() {
 		nodeId := f.nodeDoneQ.Pop()
 		edges := f.Dag.Edges[nodeId]
 		for _, edge := range edges {
-			if edge.isPassable(f) {
-				edge.To().Run(f)
+			if edge.IsPassable(f) {
+				f.execRun(edge.To())
 			}
 		}
 	}
+}
+
+func (f *FlowInstance) execRun(node Node) {
+	node.Enter(f)
+
+	node.Run(f)
 }

@@ -2,7 +2,7 @@ package flow
 
 type Handler interface {
 	// OnEvent handles the event.
-	OnEvent(event Event) error
+	OnEvent(context FlowContext, event Event) error
 	// Enter is called when the node is entered.
 	Enter(context FlowContext) error
 	// Leave is called when the node is leaved.
@@ -13,14 +13,14 @@ type Handler interface {
 type Node interface {
 	// ID returns the ID of the node.
 	ID() string
-	// Init initializes the node.
+	// Init initializes the node when flow instance start.
 	Init(context FlowContext) error
 	// Run runs the node.
 	Run(context FlowContext) error
 	// IsDone returns whether the node is done.
 	IsDone(context FlowContext) bool
-	// IsStart returns whether the node is a start node.
-	IsStart() bool
+	// IsRunning returns whether the node is running.
+	IsRunning() bool
 	// implement Handler
 	Handler
 }
@@ -33,7 +33,7 @@ type Edge interface {
 
 	To() Node
 
-	isPassable(context FlowContext) bool
+	IsPassable(context FlowContext) bool
 }
 
 type Event interface {
